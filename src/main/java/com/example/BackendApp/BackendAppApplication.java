@@ -1,6 +1,8 @@
 package com.example.BackendApp;
 
+import com.example.BackendApp.models.HotelModel;
 import com.example.BackendApp.models.TravelModel;
+import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,11 +28,17 @@ public class BackendAppApplication {
 class Tester {
 	@Autowired
 	TravelRepository travelRepository;
+	
+	@RequestMapping(value = "/")
+  public String xd() {
+	  return "WTF";
+  }
 
 	@RequestMapping(value = "/api/getItems", method = RequestMethod.GET)
 	@CrossOrigin
 	public List<TravelModel> getItems() {
-		return travelRepository.findAll();
+    System.out.println(travelRepository.findAll().get(0).toString());
+	  return travelRepository.findAll();
 	}
 
 	@RequestMapping(value = "/api/getItem", method = RequestMethod.GET)
@@ -43,49 +51,66 @@ class Tester {
 	@RequestMapping(value = "/api/setItem", method = RequestMethod.GET)
 	@CrossOrigin
 	public String initItem() {
-		TravelModel travel1 = new TravelModel("Travel Name", "Poland", "This is some desc", "2020.12.11", "2020.12.25", "Hotel name", "Airplane",
-				new ArrayList<>(Arrays.asList("Atuty 1", "Atuty 2")), new ArrayList<>(Arrays.asList("Zdjecie 1", "Zdjecie 2"))
+		TravelModel travel1 = new TravelModel("Travel Name", 
+      "Portugalia",
+      "This is some desc",
+      "2020-03-16",
+      "2020-04-25",
+      "Samolot",
+        new HotelModel("Hotel Name", "Hotel Desc", 4),
+        new ArrayList<>(Arrays.asList("Test attr", "Test attr 2", "Test attr 3", "Test attr 4")),
+        new ArrayList<>(Arrays.asList("https://wallpaperaccess.com/full/469970.jpg", "https://www.portugal-live.net/images/rotator/251-physical-geography-a.jpg", "https://www.messagez.com/wp-content/gallery/portugal/best-of-algarve-portugal-photography-20-by-messagez-com_.jpg")),
+      4,
+      2000,
+      3
 		);
-		travelRepository.insert(travel1);
+    TravelModel travel3 = new TravelModel("Travel Name",
+      "Poland",
+      "This is some desc",
+      "2020-03-20",
+      "2020-04-18",
+      "Samolot",
+      new HotelModel("Hotel Name", "Hotel Desc", 4),
+      new ArrayList<>(Arrays.asList("Test attr", "Test attr 2", "Test attr 3", "Test attr 4")),
+      new ArrayList<>(Arrays.asList("https://dag08uxs564ub.cloudfront.net/images/Pieniny_mountains_in_Poland_-_view_on_Tatras.width-1200.jpg", "https://wallpaperaccess.com/full/370035.jpg", "https://jakubpolomski.com/wp-content/uploads/2018/01/Poland-Landscape-Photo-Jakub-Polomski-12BSK0012.jpg")),
+      4,
+      2000,
+      4
+    );
+    TravelModel travel2 = new TravelModel("Travel Name",
+      "Egipt",
+      "This is some desc",
+      "2020-03-25",
+      "2020-04-01",
+      "Samolot",
+      new HotelModel("Hotel Name", "Hotel Desc", 4),
+      new ArrayList<>(Arrays.asList("Test attr", "Test attr 2", "Test attr 3", "Test attr 4")),
+      new ArrayList<>(Arrays.asList("https://ocdn.eu/pulscms-transforms/1/mn7k9kuTURBXy9hNjFiYjE2NS0yNjBhLTRiZGQtYmU5Ny1kNTU2MWExMGJjYzEuanBlZ5GVAs0DBwDDw4GhMAE", "https://dziendobry.tvn.pl/media/cache/content_cover/xgettyimages-531252132-jpg.jpg.pagespeed.ic.icMi4w-HJg.jpg", "https://media.wplm.pl/thumbs/NzIweDQ0Mi9jX2MvdV8xL2NjX2M5MWYwL3AvMjAxOS8xMi8yNi85NDgvNTMyLzYxMzYxYTNkY2Y0MDQ1MDBhYTQzM2NjMjVjM2JiOTUxLmpwZWc=.jpeg")),
+      4,
+      2000,
+      6
+    );
+    travelRepository.insert(travel1);
+    travelRepository.insert(travel2);
+    travelRepository.insert(travel3);
 		return "dodano nowe podróże";
 	}
 
 	@RequestMapping(value = "/api/createTravel", method = RequestMethod.POST)
 	@CrossOrigin
-	public CustomResponse createNewTravel(@RequestBody LoginForm loginForm) {
-		System.out.println(loginForm.getUsername());
-		return new CustomResponse("SUCCESS", "User succesfuly created", loginForm);
+	public CustomResponse createNewTravel(@RequestBody TravelModel travel) {
+		return new CustomResponse("SUCCESS", "User succesfuly created", travel);
 	}
+
+  @RequestMapping(value = "/api/test", method = RequestMethod.POST)
+  @CrossOrigin
+  public CustomResponse testPost(@RequestBody TravelModel tester) {
+    travelRepository.insert(tester);
+    return new CustomResponse("SUCCESS", "User succesfuly created", tester);
+  }
 }
 
 interface TravelRepository extends MongoRepository<TravelModel, String> {}
-
-class LoginForm {
-	private String username;
-	private String password;
-	// ...
-
-	public LoginForm(String username, String password) {
-		this.username = username;
-		this.password = password;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-}
 
 class CustomResponse {
 	private String responseType;
