@@ -7,7 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ class Tester {
 	TravelRepository travelRepository;
 	
 	@RequestMapping(value = "/")
-  public String xd() {
+ 	public String xd() {
 	  return "WTF";
   }
 
@@ -104,9 +105,13 @@ class Tester {
 
   @RequestMapping(value = "/api/test", method = RequestMethod.POST)
   @CrossOrigin
-  public CustomResponse testPost(@RequestBody TravelModel tester) {
-    travelRepository.insert(tester);
-    return new CustomResponse("SUCCESS", "User succesfuly created", tester);
+  public ResponseEntity<String> testPost(@RequestBody TravelModel tester) {
+    try {
+    	travelRepository.insert(tester);
+	} catch (Exception e) {
+    	return new ResponseEntity<>("Hello", HttpStatus.NOT_ACCEPTABLE);
+	}
+    return new ResponseEntity<>("Travel Correctly added", HttpStatus.OK);
   }
 }
 
