@@ -10,11 +10,10 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.io.File;
+import java.util.*;
 
 @SpringBootApplication
 public class BackendAppApplication {
@@ -101,6 +100,20 @@ class Tester {
 	@CrossOrigin
 	public CustomResponse createNewTravel(@RequestBody TravelModel travel) {
 		return new CustomResponse("SUCCESS", "User succesfuly created", travel);
+	}
+	
+	@RequestMapping(value = "/api/testImages", method = RequestMethod.POST)
+	@CrossOrigin
+	public ResponseEntity<Void> TestImages(@RequestParam("files") MultipartFile[] files) {
+		try {
+			System.out.println("File List");
+			for (MultipartFile file: files) {
+				System.out.println(file.getOriginalFilename());
+			}
+			return new ResponseEntity<Void>(HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+		}
 	}
 
   @RequestMapping(value = "/api/test", method = RequestMethod.POST)
