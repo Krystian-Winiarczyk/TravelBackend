@@ -1,20 +1,29 @@
 package com.example.BackendApp.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.List;
 
 public class TravelModel {
     @Id
     @Indexed(unique = true, direction = IndexDirection.DESCENDING, dropDups = true)
     private String id;
-    private String name, country, description, startDate, endDate, transport;
+    private String name;
+    private String country;
+    private String description;
+    private String startDate;
+    private String endDate;
+    private String transport;
     private HotelModel hotel;
-    private ArrayList<String> atuts, imagesPaths;
-    private Integer tripStars, price, personsCount;
+    private List<String> atuts;
+    private Integer tripStars;
+    private Integer price;
+    private Integer personsCount;
 
   public Integer getPersonsCount() {
     return personsCount;
@@ -24,7 +33,17 @@ public class TravelModel {
     this.personsCount = personsCount;
   }
 
-  public TravelModel(String name, String country, String description, String startDate, String endDate, String transport, HotelModel hotel, ArrayList<String> atuts, ArrayList<String> imagesPaths, Integer tripStars, Integer price, Integer personsCount) {
+  public TravelModel(@JsonProperty("name") String name,
+                     @JsonProperty("country") String country,
+                     @JsonProperty("description") String description,
+                     @JsonProperty("startDate") String startDate,
+                     @JsonProperty("endDate") String endDate,
+                     @JsonProperty("transport") String transport,
+                     @JsonProperty("hotel") HotelModel hotel,
+                     @JsonProperty("atuts") List<String> atuts,
+                     @JsonProperty("tripStars") Integer tripStars,
+                     @JsonProperty("price") Integer price,
+                     @JsonProperty("personsCount") Integer personsCount) {
     this.name = name;
     this.country = country;
     this.description = description;
@@ -33,7 +52,6 @@ public class TravelModel {
     this.transport = transport;
     this.hotel = hotel;
     this.atuts = atuts;
-    this.imagesPaths = imagesPaths;
     this.tripStars = tripStars;
     this.price = price;
     this.personsCount = personsCount;
@@ -119,20 +137,12 @@ public class TravelModel {
         this.transport = transport;
     }
 
-    public ArrayList<String> getAtuts() {
+    public List<String> getAtuts() {
         return atuts;
     }
 
     public void setAtuts(ArrayList<String> atuts) {
         this.atuts = atuts;
-    }
-
-    public ArrayList<String> getImagesPaths() {
-        return imagesPaths;
-    }
-
-    public void setImagesPaths(ArrayList<String> imagesPaths) {
-        this.imagesPaths = imagesPaths;
     }
 
   @Override
@@ -145,9 +155,8 @@ public class TravelModel {
       ", startDate='" + startDate + '\'' +
       ", endDate='" + endDate + '\'' +
       ", transport='" + transport + '\'' +
-      ", hotel=" + hotel +
+      ", hotel=" + hotel.toString() +
       ", atuts=" + atuts +
-      ", imagesPaths=" + imagesPaths +
       ", tripStars=" + tripStars +
       ", price=" + price +
       '}';
