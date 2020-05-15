@@ -1,6 +1,7 @@
 package com.example.BackendApp.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.bson.types.Binary;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -24,6 +25,7 @@ public class TravelModel {
     private Integer tripStars;
     private Integer price;
     private Integer personsCount;
+    private ArrayList<String> images;
 
   public Integer getPersonsCount() {
     return personsCount;
@@ -57,7 +59,15 @@ public class TravelModel {
     this.personsCount = personsCount;
   }
 
-  public HotelModel getHotel() {
+    public ArrayList<String> getImages() {
+        return images;
+    }
+
+    public void setImages(ArrayList<String> images) {
+        this.images = images;
+    }
+
+    public HotelModel getHotel() {
     return hotel;
   }
 

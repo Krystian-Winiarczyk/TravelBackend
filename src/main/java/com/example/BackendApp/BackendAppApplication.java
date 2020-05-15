@@ -2,13 +2,12 @@ package com.example.BackendApp;
 
 import com.example.BackendApp.models.*;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.catalina.connector.Response;
+import org.bson.BsonBinarySubType;
+import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.json.GsonJsonParser;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.http.HttpStatus;
@@ -16,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.util.*;
 
 @SpringBootApplication
@@ -102,19 +100,26 @@ class Tester {
     }
 
     @RequestMapping(value = "/api/testImages", method = RequestMethod.POST)
-    public ResponseEntity<Void> TestImages(@RequestParam MultipartFile[] files, @RequestParam String travel) {
+    public String TestImages(@RequestParam MultipartFile[] files, @RequestParam String travel) {
 		try {
-//            ObjectMapper mapper = new ObjectMapper();
-//            mapper.enable(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES);
-//            TravelModel travelModel = mapper.readValue(travel, TravelModel.class);
-//
-//            travelRepository.insert(travelModel);
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.enable(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES);
+
+            ArrayList<String> images = new ArrayList<>();
+            TravelModel travelModel = mapper.readValue(travel, TravelModel.class);
+
 			for (MultipartFile file: files) {
-				System.out.println(file.getOriginalFilename());
+			    Binary convertedFile = new Binary(BsonBinarySubType.BINARY, file.getBytes());
+                images.add(
+                        Base64.getEncoder().encodeToString(convertedFile.getData())
+                );
 			}
-			return new ResponseEntity<Void>(HttpStatus.OK);
+            travelModel.setImages(images);
+            travelRepository.insert(travelModel);
+            return "new ResponseEntity<Void>(HttpStatus.OK)";
 		} catch (Exception e) {
-			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+            System.out.println(e.getMessage());
+			return e.getMessage();
 		}
     }
 
